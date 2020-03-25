@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const {PORT} = require('./constants');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const moviesRoute = require('./routes/movies.js')
 require('dotenv').config()
 dotenv.config();
 
@@ -14,16 +15,12 @@ const app = express();
 module.exports = app;
 
 //middlewares
+app.use('/movies',moviesRoute);
 app.use(require('body-parser').json());
 app.use(cors());
 app.use(helmet());
 
 app.options('*', cors());
-
-//routes
-app.get('/', (request, response) => {
-  response.send({'ack': true});
-});
 
 //connect db
 mongoose.connect(DB_CONNECTION,
