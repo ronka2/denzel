@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 
 const movieSchema = mongoose.Schema({
-  actorID: {
-		type: String,
-		required: true
+  actor: {
+		type: String
 	},
 	link: {
 		type: String
