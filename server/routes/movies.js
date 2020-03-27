@@ -50,7 +50,17 @@ router.get('/',async (request, response) => {
     response.json(randMovie)
   }
 	catch(err) {
-		res.json({message: err});
+		response.json({message: err});
+	}
+});
+
+router.get('/:id',async (request, response) => {
+  try{
+    const randMovie = await Movie.findOne({"id":request.params.id});
+    response.json(randMovie)
+  }
+	catch(err) {
+		response.json({message: err});
 	}
 });
 
