@@ -15,6 +15,7 @@ const app = express();
 module.exports = app;
 
 //middlewares
+app.use(require('body-parser').json());
 app.use('/movies',moviesRoute);
 app.use(require('body-parser').json());
 app.use(cors());

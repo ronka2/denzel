@@ -10,10 +10,7 @@ router.get('/search',async (request, response) => {
   if(request.query.metascore) metascore = Number(request.query.metascore);
 	if(request.query.limit) limit = Number(request.query.limit);
   try{
-    console.log(metascore);
-    console.log(limit);
     const search = await Movie.aggregate([{$match: {metascore: {$gt: metascore}}}, {$sample: {size: limit}}, {$sort: {metascore: -1}}]);
-    console.log(search);
     response.json(search);
   }
 	catch(err) {
@@ -78,6 +75,18 @@ router.get('/',async (request, response) => {
     const randMovie = await Movie.aggregate([{ $match: { metascore: { $gt: 77 } } }, { $sample: { size: 1 } }]);
     response.json(randMovie)
   }
+	catch(err) {
+		response.json({message: err});
+	}
+});
+
+router.post('/:id', async (request, response) => {
+	let movie;
+	try {
+		movie = await Movie.findOne({"id": request.params.id});
+		await Movie.updateOne({ _id: movie._id }, {watch_date: request.body.date, review: request.body.review});
+		response.send({ _id: movie._id });
+	}
 	catch(err) {
 		response.json({message: err});
 	}
