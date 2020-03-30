@@ -11,6 +11,7 @@ router.get('/search',async (request, response) => {
 	if(request.query.limit) limit = Number(request.query.limit);
   try{
     const search = await Movie.aggregate([{$match: {metascore: {$gt: metascore}}}, {$sample: {size: limit}}, {$sort: {metascore: -1}}]);
+console.log(search);
     response.json(search);
   }
 	catch(err) {
@@ -24,6 +25,7 @@ router.get('/populate/:id', async (request, response) => {
   films = await imdb(request.params.id);
 
   for (f of films) {
+    console.log(f.title);
       const db = new Movie({
   			actor: request.params.id,
   			id: f.id,
@@ -38,7 +40,11 @@ router.get('/populate/:id', async (request, response) => {
   		})
 
       try {
-            await db.save();
+            const specMovie = await Movie.findOne({"id":f.id});
+            if(specMovie == null)
+            {
+              await db.save();
+            }
           }
           catch (err) {
             return response.status(500).json(err);
@@ -62,8 +68,9 @@ Movie.countDocuments({ actor:request.params.id }, function(err,count){
 
 router.get('/:id',async (request, response) => {
   try{
-    const randMovie = await Movie.findOne({"id":request.params.id});
-    response.json(randMovie)
+    const specMovie = await Movie.findOne({"id":request.params.id});
+    console.log(specMovie);
+    response.json(specMovie)
   }
 	catch(err) {
 		response.json({message: err});
@@ -73,6 +80,7 @@ router.get('/:id',async (request, response) => {
 router.get('/',async (request, response) => {
   try{
     const randMovie = await Movie.aggregate([{ $match: { metascore: { $gt: 77 } } }, { $sample: { size: 1 } }]);
+    console.log(randMovie);
     response.json(randMovie)
   }
 	catch(err) {

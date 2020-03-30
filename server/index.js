@@ -5,8 +5,10 @@ const {PORT} = require('./constants');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const moviesRoute = require('./routes/movies.js')
+const graphqlHTTP = require('express-graphql');
+const {GraphQLSchema} = require('graphql');
+const {queryType} = require('./query.js');
 require('dotenv').config()
-dotenv.config();
 
 const DB_CONNECTION = process.env.DB_CONNECTION;
 
@@ -29,6 +31,13 @@ mongoose.connect(DB_CONNECTION,
  () =>{
   console.log('connect to bd');
 });
+
+//graphql stuff
+const schema = new GraphQLSchema({ query: queryType });
+app.use('/graphql', graphqlHTTP({
+    schema: schema,
+    graphiql: true,
+}));
 
 app.listen(PORT);
 console.log(`📡 Running on port ${PORT}`);
